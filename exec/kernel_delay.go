@@ -21,7 +21,11 @@
 	 "fmt"
 	 "path"
 	 "strings"
+<<<<<<< HEAD
 
+=======
+ 
+>>>>>>> d0141e4... add strace support
 	 "github.com/chaosblade-io/chaosblade-spec-go/spec"
 	 "github.com/chaosblade-io/chaosblade-spec-go/util"
  )
@@ -53,6 +57,7 @@
 					Desc: "sleep time, the unit of time can be specified: s,ms,us,ns",
 					Required: true,
 				 },
+<<<<<<< HEAD
 				 &spec.ExpFlag{
 					Name: "delay-loc",
 					Desc: "if the flag is enter, the fault will be injected before the syscall is executed. if the flag is exit, the fault will be injected after the syscall is executed",
@@ -74,6 +79,12 @@
 			 ActionExecutor: &StraceDelayActionExecutor{},
 			 ActionExample: `
 # Create a strace 10s delay experiment to the process
+=======
+			 },
+			 ActionExecutor: &StraceDelayActionExecutor{},
+			 ActionExample: `
+# Create a strace 10s delay experiment to the process 
+>>>>>>> d0141e4... add strace support
 blade create strace delay --pid 1 --syscall-name mmap --time 10s`,
 			 ActionPrograms: []string{StraceDelayBin},
 		 },
@@ -116,12 +127,18 @@ func (dae *StraceDelayActionExecutor) Exec(uid string, ctx context.Context, mode
 	if dae.channel == nil {
 		return spec.ReturnFail(spec.Code[spec.ServerError],"channel is nil")
 	}
+<<<<<<< HEAD
 
 	var pidList string
 	var delay_loc_flag string
 	var first_flag string
 	var end_flag string
 	var step string
+=======
+	
+	var pidList string
+
+>>>>>>> d0141e4... add strace support
 	pidStr := model.ActionFlags["pid"]
 	if pidStr != ""{
 		pids, err := util.ParseIntegerListToStringSlice(pidStr)
@@ -134,12 +151,17 @@ func (dae *StraceDelayActionExecutor) Exec(uid string, ctx context.Context, mode
 	time := model.ActionFlags["time"]
 	if time == "" {
 		return spec.ReturnFail(spec.Code[spec.IllegalParameters], "must specify --time flag")
+<<<<<<< HEAD
 	}
+=======
+	} 
+>>>>>>> d0141e4... add strace support
 	syscallName := model.ActionFlags["syscall-name"]
 	if syscallName == "" {
 		return spec.ReturnFail(spec.Code[spec.IllegalParameters], "must specify --syscall-name flag")
 	}
 
+<<<<<<< HEAD
 	delay_loc_flag = model.ActionFlags["delay-loc"]
 	if delay_loc_flag == "" {
 		return spec.ReturnFail(spec.Code[spec.IllegalParameters], "must specify --delay-loc flag")
@@ -166,10 +188,33 @@ func (dae *StraceDelayActionExecutor) start(ctx context.Context, pidList string,
 		args = fmt.Sprintf("%s --step %s",args,step)
 	}
 	// fmt.Println(args)
+=======
+	if _, ok := spec.IsDestroy(ctx); ok{
+		return dae.stop(ctx, pidList, syscallName)
+	}
+	return dae.start(ctx, pidList, time, syscallName)
+} 
+
+//start strace delay
+func (dae *StraceDelayActionExecutor) start(ctx context.Context, pidList string,time string, syscallName string) *spec.Response{
+	args := fmt.Sprintf("--start --pid %s --time %s --syscallName %s",pidList, time, syscallName)
+	fmt.Println(args)
+	// t, err := strconv.Atoi(time)
+	// if err != nil {
+	// 	return spec.ReturnFail(spec.Code[spec.IllegalParameters], "time must be positive integer")
+	// }
+	// timeInSecond := float32(t) / 1000.0
+>>>>>>> d0141e4... add strace support
 	return dae.channel.Run(ctx,path.Join(dae.channel.GetScriptPath(), StraceDelayBin), args)
 }
 
 func (dae *StraceDelayActionExecutor) stop(ctx context.Context, pidList string,  syscallName string) *spec.Response{
+<<<<<<< HEAD
 	args := fmt.Sprintf("--stop --pid %s --syscall-name %s",pidList,syscallName)
 	return dae.channel.Run(ctx, path.Join(dae.channel.GetScriptPath(), StraceDelayBin),args)
 }
+=======
+	args := fmt.Sprintf("--stop --pid %s --syscallName %s",pidList,syscallName)
+	return dae.channel.Run(ctx, path.Join(dae.channel.GetScriptPath(), StraceDelayBin),args)
+}
+>>>>>>> d0141e4... add strace support

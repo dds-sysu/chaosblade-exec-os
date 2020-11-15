@@ -21,7 +21,11 @@
 	 "fmt"
 	 "path"
 	 "strings"
+<<<<<<< HEAD
 
+=======
+ 
+>>>>>>> d0141e4... add strace support
 	 "github.com/chaosblade-io/chaosblade-spec-go/spec"
 	 "github.com/chaosblade-io/chaosblade-spec-go/util"
  )
@@ -53,6 +57,7 @@
 					Desc: "the return-value the syscall will return",
 					Required: true,
 				 },
+<<<<<<< HEAD
 				  &spec.ExpFlag{
 					Name: "first",
 					Desc: "if the flag is true, the fault will be injected to the first met syscall",
@@ -69,6 +74,12 @@
 			 ActionExecutor: &StraceErrorActionExecutor{},
 			 ActionExample: `
 # Create a strace error experiment to the process
+=======
+			 },
+			 ActionExecutor: &StraceErrorActionExecutor{},
+			 ActionExample: `
+# Create a strace error experiment to the process 
+>>>>>>> d0141e4... add strace support
 blade create strace error --pid 1 --syscall-name mmap --return-value XX`,
 			 ActionPrograms: []string{StraceErrorBin},
 		 },
@@ -111,11 +122,16 @@ func (dae *StraceErrorActionExecutor) Exec(uid string, ctx context.Context, mode
 	if dae.channel == nil {
 		return spec.ReturnFail(spec.Code[spec.ServerError],"channel is nil")
 	}
+<<<<<<< HEAD
 
 	var pidList string
 	var first_flag string
 	var end_flag string
 	var step string 
+=======
+	
+	var pidList string
+>>>>>>> d0141e4... add strace support
 
 	pidStr := model.ActionFlags["pid"]
 	if pidStr != ""{
@@ -129,12 +145,17 @@ func (dae *StraceErrorActionExecutor) Exec(uid string, ctx context.Context, mode
 	return_value := model.ActionFlags["return-value"]
 	if return_value == "" {
 		return spec.ReturnFail(spec.Code[spec.IllegalParameters], "must specify --return-value flag")
+<<<<<<< HEAD
 	}
+=======
+	} 
+>>>>>>> d0141e4... add strace support
 	syscallName := model.ActionFlags["syscall-name"]
 	if syscallName == "" {
 		return spec.ReturnFail(spec.Code[spec.IllegalParameters], "must specify --syscall-name flag")
 	}
 
+<<<<<<< HEAD
 	first_flag = model.ActionFlags["first"]
 	end_flag = model.ActionFlags["end"]
 
@@ -160,10 +181,33 @@ func (dae *StraceErrorActionExecutor) start(ctx context.Context, pidList string,
 		args = fmt.Sprintf("%s --step %s",args,step)
 	}
 	// fmt.Println(args)
+=======
+	if _, ok := spec.IsDestroy(ctx); ok{
+		return dae.stop(ctx, pidList, syscallName)
+	}
+	return dae.start(ctx, pidList, return_value, syscallName)
+} 
+
+//start strace Error
+func (dae *StraceErrorActionExecutor) start(ctx context.Context, pidList string,return_value string, syscallName string) *spec.Response{
+	args := fmt.Sprintf("--start --pid %s --return-value %s --syscallName %s",pidList, return_value, syscallName)
+	fmt.Println(args)
+	// t, err := strconv.Atoi(time)
+	// if err != nil {
+	// 	return spec.ReturnFail(spec.Code[spec.IllegalParameters], "time must be positive integer")
+	// }
+	// timeInSecond := float32(t) / 1000.0
+>>>>>>> d0141e4... add strace support
 	return dae.channel.Run(ctx,path.Join(dae.channel.GetScriptPath(), StraceErrorBin), args)
 }
 
 func (dae *StraceErrorActionExecutor) stop(ctx context.Context, pidList string,  syscallName string) *spec.Response{
+<<<<<<< HEAD
 	args := fmt.Sprintf("--stop --pid %s --syscall-name %s",pidList,syscallName)
 	return dae.channel.Run(ctx, path.Join(dae.channel.GetScriptPath(), StraceErrorBin),args)
 }
+=======
+	args := fmt.Sprintf("--stop --pid %s --syscallName %s",pidList,syscallName)
+	return dae.channel.Run(ctx, path.Join(dae.channel.GetScriptPath(), StraceErrorBin),args)
+}
+>>>>>>> d0141e4... add strace support
